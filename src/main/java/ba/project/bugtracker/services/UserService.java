@@ -1,11 +1,10 @@
 package ba.project.bugtracker.services;
 
+import ba.project.bugtracker.exceptions.custom.EntityNotFoundException;
 import ba.project.bugtracker.model.User;
 import ba.project.bugtracker.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityNotFoundException;
 
 @Service
 @RequiredArgsConstructor

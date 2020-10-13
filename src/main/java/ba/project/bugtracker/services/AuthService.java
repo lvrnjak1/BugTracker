@@ -1,13 +1,13 @@
 package ba.project.bugtracker.services;
 
 import ba.project.bugtracker.auth.JwtProvider;
-import ba.project.bugtracker.exceptions.EmailAlreadyInUse;
-import ba.project.bugtracker.exceptions.UsernameNotAvailableException;
+import ba.project.bugtracker.exceptions.custom.EmailAlreadyInUse;
+import ba.project.bugtracker.exceptions.custom.InvalidCredentialsException;
+import ba.project.bugtracker.exceptions.custom.UsernameNotAvailableException;
 import ba.project.bugtracker.model.User;
 import ba.project.bugtracker.repositories.UserRepository;
 import ba.project.bugtracker.utility.RoleName;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,14 +26,14 @@ public class AuthService implements UserDetailsService {
     @Override
     public User loadUserByUsername(String username){
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new BadCredentialsException("Username " + username + " not found!"));
+                .orElseThrow(() -> new InvalidCredentialsException("Username " + username + " not found!"));
     }
 
     public String authenticate(String username, String password){
         UserDetails userDetails = loadUserByUsername(username);
         boolean correctPassword = passwordEncoder.matches(password, userDetails.getPassword());
         if(!correctPassword){
-            throw new BadCredentialsException("Bad credentials");
+            throw new InvalidCredentialsException("Bad credentials");
         }
         UsernamePasswordAuthenticationToken auth =
                 new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
@@ -42,7 +42,7 @@ public class AuthService implements UserDetailsService {
         return jwtProvider.generateToken(userDetails);
     }
 
-    public void register(User user) throws UsernameNotAvailableException, EmailAlreadyInUse {
+    public void register(User user){
         checkUsernameAvailability(user.getUsername());
         checkEmailAvailability(user.getEmail());
         user.getRoles().add(roleService.findByRoleName(RoleName.ROLE_USER));
@@ -50,12 +50,12 @@ public class AuthService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    private void checkUsernameAvailability(String username) throws UsernameNotAvailableException {
+    private void checkUsernameAvailability(String username){
         if(userRepository.findByUsername(username).isPresent()){
             throw new UsernameNotAvailableException("Username " + username + " is not available");
         }
     }
-    private void checkEmailAvailability(String email) throws EmailAlreadyInUse {
+    private void checkEmailAvailability(String email){
         if(userRepository.findByEmail(email).isPresent()){
             throw new EmailAlreadyInUse("Email " + email + " is already in use");
         }

@@ -1,10 +1,9 @@
 package ba.project.bugtracker.controllers;
 
-import ba.project.bugtracker.exceptions.EmailAlreadyInUse;
-import ba.project.bugtracker.exceptions.UsernameNotAvailableException;
 import ba.project.bugtracker.model.User;
 import ba.project.bugtracker.requests.LoginRequest;
 import ba.project.bugtracker.requests.RegisterRequest;
+import ba.project.bugtracker.responses.ApiResponse;
 import ba.project.bugtracker.responses.LoginResponse;
 import ba.project.bugtracker.services.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -30,10 +29,10 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) throws EmailAlreadyInUse, UsernameNotAvailableException {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest){
         authService.register(new User(registerRequest.getUsername(),
                 registerRequest.getPassword(),
                 registerRequest.getEmail()));
-        return ResponseEntity.ok("User " + registerRequest.getUsername() + " created!");
+        return ResponseEntity.ok(new ApiResponse("User " + registerRequest.getUsername() + " created!"));
     }
 }

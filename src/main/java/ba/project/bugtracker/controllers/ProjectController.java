@@ -1,5 +1,6 @@
 package ba.project.bugtracker.controllers;
 
+import ba.project.bugtracker.exceptions.custom.UnauthorizedException;
 import ba.project.bugtracker.model.Project;
 import ba.project.bugtracker.model.User;
 import ba.project.bugtracker.requests.ProjectRequest;
@@ -48,9 +49,10 @@ public class ProjectController {
         User user = userService.findByUsername(principal.getName());
         Project project = projectService.findById(projectId);
 
-//        if(!project.getProjectManager().equals(user)){
-//            throw new UnauthorizedException("You are not authorized to do this");
-//        }
+        if(!project.getProjectManager().equals(user)){
+            throw new UnauthorizedException("You are not authorized to do this!");
+        }
+
         projectService.delete(project);
 
         if(user.getProjects().isEmpty()){
