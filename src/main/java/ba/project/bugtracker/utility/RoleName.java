@@ -1,5 +1,5 @@
 package ba.project.bugtracker.utility;
 
 public enum RoleName {
-    USER, PROJECT_MANAGER
+    ROLE_USER, ROLE_PROJECT_MANAGER
 }

@@ -42,10 +42,10 @@ public class AuthService implements UserDetailsService {
         return jwtProvider.generateToken(userDetails);
     }
 
-    public void reqister(User user) throws UsernameNotAvailableException, EmailAlreadyInUse {
+    public void register(User user) throws UsernameNotAvailableException, EmailAlreadyInUse {
         checkUsernameAvailability(user.getUsername());
         checkEmailAvailability(user.getEmail());
-        user.getRoles().add(roleService.findByRoleName(RoleName.USER));
+        user.getRoles().add(roleService.findByRoleName(RoleName.ROLE_USER));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }

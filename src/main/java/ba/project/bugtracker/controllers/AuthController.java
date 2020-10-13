@@ -31,7 +31,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) throws EmailAlreadyInUse, UsernameNotAvailableException {
-        authService.reqister(new User(registerRequest.getUsername(),
+        authService.register(new User(registerRequest.getUsername(),
                 registerRequest.getPassword(),
                 registerRequest.getEmail()));
         return ResponseEntity.ok("User " + registerRequest.getUsername() + " created!");
