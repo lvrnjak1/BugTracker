@@ -24,4 +24,8 @@ public class UserService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User doesn't exist!"));
     }
+
+    public void delete(User user) {
+        userRepository.delete(user);
+    }
 }

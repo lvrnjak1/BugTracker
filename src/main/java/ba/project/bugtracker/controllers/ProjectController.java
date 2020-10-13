@@ -93,4 +93,11 @@ public class ProjectController {
 
         return ResponseEntity.ok(project);
     }
+
+//    @PutMapping("/{projectId}")
+//    @Secured("ROLE_MANAGER")
+//    public ResponseEntity<?> assignDeveloperToProject(@PathVariable Long projectId,
+//                                                      Principal principal){
+//        return null;
+//    }
 }
