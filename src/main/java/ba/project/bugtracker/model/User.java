@@ -83,6 +83,10 @@ public class User extends Entity implements UserDetails {
         roles.add(role);
     }
 
+    public void removeRole(Role role) {
+        roles.remove(role);
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }

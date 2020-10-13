@@ -6,14 +6,17 @@ import ba.project.bugtracker.utility.RoleName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
+
 @Service
 @RequiredArgsConstructor
 public class RoleService {
     private final RoleRepository roleRepository;
 
     public Role findByRoleName(RoleName roleName){
-        //roleRepository.findAll().forEach(System.out::println);
         return roleRepository.findByRole(roleName)
-                .orElseThrow(() -> new RuntimeException("Role not found"));
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Role " + roleName.name() + " doesn't exist")
+                );
     }
 }

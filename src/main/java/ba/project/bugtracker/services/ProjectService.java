@@ -7,6 +7,8 @@ import ba.project.bugtracker.requests.ProjectRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
+
 @Service
 @RequiredArgsConstructor
 public class ProjectService {
@@ -18,5 +20,15 @@ public class ProjectService {
 
     public void save(Project project) {
         projectRepository.save(project);
+    }
+
+    public Project findById(Long projectId) {
+        return projectRepository.findById(projectId).orElseThrow(
+                () -> new EntityNotFoundException("Project with id " + projectId + " doesn't exist!")
+        );
+    }
+
+    public void delete(Project project) {
+        projectRepository.delete(project);
     }
 }

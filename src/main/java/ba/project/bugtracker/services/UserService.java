@@ -5,6 +5,8 @@ import ba.project.bugtracker.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -12,7 +14,7 @@ public class UserService {
 
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User with this username doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("User " + username + " doesn't exist!"));
     }
 
     public void save(User user) {
