@@ -5,7 +5,6 @@ import ba.project.bugtracker.model.Project;
 import ba.project.bugtracker.model.User;
 import ba.project.bugtracker.requests.ProjectRequest;
 import ba.project.bugtracker.responses.ApiResponse;
-import ba.project.bugtracker.responses.ProjectResponse;
 import ba.project.bugtracker.services.ProjectService;
 import ba.project.bugtracker.services.RoleService;
 import ba.project.bugtracker.services.UserService;
@@ -39,7 +38,7 @@ public class ProjectController {
         user.addRole(roleService.findByRoleName(RoleName.ROLE_MANAGER));
         userService.save(user);
 
-        return ResponseEntity.ok(new ProjectResponse(project.getId(), project.getName()));
+        return ResponseEntity.ok(project);
     }
 
     @DeleteMapping("/{projectId}")
@@ -61,5 +60,37 @@ public class ProjectController {
             userService.save(user);
         }
         return ResponseEntity.ok(new ApiResponse("Project " + project.getName() + " successfully deleted!"));
+    }
+
+    @PutMapping("/{projectId}")
+    @Secured("ROLE_MANAGER")
+    public ResponseEntity<?> editProject(@PathVariable Long projectId,
+                                         @RequestBody ProjectRequest projectRequest,
+                                         Principal principal){
+        User user = userService.findByUsername(principal.getName());
+        Project project = projectService.findById(projectId);
+
+        if(!project.getProjectManager().equals(user)){
+            throw new UnauthorizedException("You are not authorized to do this!");
+        }
+
+        project.setName(projectRequest.getName());
+        projectService.save(project);
+
+        return ResponseEntity.ok(project);
+    }
+
+    @GetMapping("/{projectId}")
+    @Secured("ROLE_MANAGER")
+    public ResponseEntity<?> getProjectById(@PathVariable Long projectId,
+                                         Principal principal){
+        User user = userService.findByUsername(principal.getName());
+        Project project = projectService.findById(projectId);
+
+        if(!project.getProjectManager().equals(user)){
+            throw new UnauthorizedException("You are not authorized to do this!");
+        }
+
+        return ResponseEntity.ok(project);
     }
 }

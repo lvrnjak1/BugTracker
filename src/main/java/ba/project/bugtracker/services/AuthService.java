@@ -42,12 +42,13 @@ public class AuthService implements UserDetailsService {
         return jwtProvider.generateToken(userDetails);
     }
 
-    public void register(User user){
+    public User register(User user){
         checkUsernameAvailability(user.getUsername());
         checkEmailAvailability(user.getEmail());
         user.getRoles().add(roleService.findByRoleName(RoleName.ROLE_USER));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+        return user;
     }
 
     private void checkUsernameAvailability(String username){
