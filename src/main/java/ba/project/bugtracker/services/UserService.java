@@ -14,4 +14,8 @@ public class UserService {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User with this username doesn't exist"));
     }
+
+    public void save(User user) {
+        userRepository.save(user);
+    }
 }
