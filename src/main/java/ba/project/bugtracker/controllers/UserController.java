@@ -1,7 +1,6 @@
 package ba.project.bugtracker.controllers;
 
 import ba.project.bugtracker.model.User;
-import ba.project.bugtracker.services.ProjectService;
 import ba.project.bugtracker.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,6 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final ProjectService projectService;
 
     @GetMapping("/user/{userId}")
     @Secured("ROLE_USER")
