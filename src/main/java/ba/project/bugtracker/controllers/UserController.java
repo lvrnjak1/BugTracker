@@ -1,7 +1,7 @@
 package ba.project.bugtracker.controllers;
 
+import ba.project.bugtracker.model.Project;
 import ba.project.bugtracker.model.User;
-import ba.project.bugtracker.responses.ApiResponse;
 import ba.project.bugtracker.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +33,13 @@ public class UserController {
     @DeleteMapping("/user")
     @Secured("ROLE_USER")
     public ResponseEntity<?> deleteAccount(Principal principal){
-        userService.delete(userService.findByUsername(principal.getName()));
-        return ResponseEntity.ok(new ApiResponse("Account successfully deleted!"));
+        User user = userService.findByUsername(principal.getName());
+//        user.setProjectsWorkingOn(new HashSet<>());
+//        User saved = userService.save(user);
+        for (Project p : user.getProjectsWorkingOn()){
+            p.getDevelopers().remove(user);
+        }
+        userService.delete(user);
+        return ResponseEntity.ok().build();
     }
 }

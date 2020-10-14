@@ -16,8 +16,8 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("User " + username + " doesn't exist!"));
     }
 
-    public void save(User user) {
-        userRepository.save(user);
+    public User save(User user) {
+       return userRepository.save(user);
     }
 
     public User findById(Long userId) {

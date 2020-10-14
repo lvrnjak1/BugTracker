@@ -1,6 +1,6 @@
 package ba.project.bugtracker.controllers;
 
-import ba.project.bugtracker.exceptions.custom.UnauthorizedException;
+import ba.project.bugtracker.exceptions.custom.EntityNotFoundException;
 import ba.project.bugtracker.model.Project;
 import ba.project.bugtracker.model.User;
 import ba.project.bugtracker.requests.ProjectRequest;
@@ -32,10 +32,12 @@ public class ProjectController {
         User user = userService.findByUsername(principal.getName());
 
         Project project = projectService.projectFromRequest(projectRequest, user);
+        project.addDeveloper(user);
         projectService.save(project);
 
         user.addProjects(project);
         user.addRole(roleService.findByRoleName(RoleName.ROLE_MANAGER));
+        user.addRole(roleService.findByRoleName(RoleName.ROLE_DEVELOPER));
         userService.save(user);
 
         return ResponseEntity.ok(project);
@@ -49,16 +51,21 @@ public class ProjectController {
         Project project = projectService.findById(projectId);
 
         if(!project.getProjectManager().equals(user)){
-            throw new UnauthorizedException("You are not authorized to do this!");
+            //throw this error so that the user doesn't know
+            // if this id even exists within other projects
+            throw new EntityNotFoundException("Project with id " + projectId + " doesn't exist");
         }
+
+//        project.setDevelopers(new HashSet<>());
+//        projectService.save(project);
+
+//        if(user.getProjects().isEmpty()){
+//            System.out.println("Here");
+//            user.removeRole(roleService.findByRoleName(RoleName.ROLE_MANAGER));
+//            userService.save(user);
+//        }
 
         projectService.delete(project);
-
-        if(user.getProjects().isEmpty()){
-            System.out.println("Here");
-            user.removeRole(roleService.findByRoleName(RoleName.ROLE_MANAGER));
-            userService.save(user);
-        }
         return ResponseEntity.ok(new ApiResponse("Project " + project.getName() + " successfully deleted!"));
     }
 
@@ -71,7 +78,7 @@ public class ProjectController {
         Project project = projectService.findById(projectId);
 
         if(!project.getProjectManager().equals(user)){
-            throw new UnauthorizedException("You are not authorized to do this!");
+            throw new EntityNotFoundException("Project with id " + projectId + " doesn't exist");
         }
 
         project.setName(projectRequest.getName());
@@ -88,16 +95,31 @@ public class ProjectController {
         Project project = projectService.findById(projectId);
 
         if(!project.getProjectManager().equals(user)){
-            throw new UnauthorizedException("You are not authorized to do this!");
+            throw new EntityNotFoundException("Project with id " + projectId + " doesn't exist");
         }
 
         return ResponseEntity.ok(project);
     }
 
-//    @PutMapping("/{projectId}")
-//    @Secured("ROLE_MANAGER")
-//    public ResponseEntity<?> assignDeveloperToProject(@PathVariable Long projectId,
-//                                                      Principal principal){
-//        return null;
-//    }
+    @PutMapping("/{projectId}/developer")
+    @Secured("ROLE_MANAGER")
+    public ResponseEntity<?> assignDeveloperToProject(@PathVariable Long projectId,
+                                                      @RequestParam(name = "id") Long developerId,
+                                                      Principal principal){
+        User user = userService.findByUsername(principal.getName());
+        Project project = projectService.findById(projectId);
+
+        if(!project.getProjectManager().equals(user)){
+            throw new EntityNotFoundException("Project with id " + projectId + " doesn't exist");
+        }
+
+        User developer = userService.findById(developerId);
+        developer.addProjectsWorkingOn(project);
+        developer.addRole(roleService.findByRoleName(RoleName.ROLE_DEVELOPER));
+        //project.addDeveloper(developer);
+        projectService.save(project);
+        userService.save(developer);
+
+        return ResponseEntity.ok().build();
+    }
 }
