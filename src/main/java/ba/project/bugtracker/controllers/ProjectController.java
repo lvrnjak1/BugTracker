@@ -143,4 +143,19 @@ public class ProjectController {
 
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/{projectId}/developers")
+    @Secured({"ROLE_MANAGER", "ROLE_DEVELOPER"})
+    public ResponseEntity<?> getAllDevelopersForProject(@PathVariable Long projectId,
+                                                        Principal principal){
+
+        User user = userService.findByUsername(principal.getName());
+        Project project = projectService.findById(projectId);
+
+        if(!project.getProjectManager().equals(user)){
+            throw new EntityNotFoundException("Project with id " + projectId + " doesn't exist");
+        }
+
+        return ResponseEntity.ok(project.getDevelopers());
+    }
 }
