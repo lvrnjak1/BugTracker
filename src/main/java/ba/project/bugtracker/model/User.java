@@ -39,13 +39,6 @@ public class User extends Entity implements UserDetails {
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "developers")
     private Set<Project> projectsWorkingOn = new HashSet<>();
-//    @JsonIgnore
-//    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-//    @OnDelete(action = OnDeleteAction.CASCADE)
-//    @JoinTable(name = "project_developer",
-//        joinColumns = @JoinColumn(name = "developer_id"),
-//        inverseJoinColumns = @JoinColumn(name = "project_id"))
-   // private Set<Project> projectsWorkingOn = new HashSet<>();
 
     public User(String username, String password, String email) {
         this.username = username;
@@ -148,5 +141,10 @@ public class User extends Entity implements UserDetails {
     public void addProjectsWorkingOn(Project project){
         this.projectsWorkingOn.add(project);
         project.addDeveloper(this);
+    }
+
+    public void removeProjectWorkingOn(Project project) {
+        this.projectsWorkingOn.remove(project);
+        project.removeDeveloper(this);
     }
 }

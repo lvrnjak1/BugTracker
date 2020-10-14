@@ -1,6 +1,7 @@
 package ba.project.bugtracker.controllers;
 
 import ba.project.bugtracker.exceptions.custom.EntityNotFoundException;
+import ba.project.bugtracker.exceptions.custom.IllegalActionException;
 import ba.project.bugtracker.model.Project;
 import ba.project.bugtracker.model.User;
 import ba.project.bugtracker.requests.ProjectRequest;
@@ -56,14 +57,11 @@ public class ProjectController {
             throw new EntityNotFoundException("Project with id " + projectId + " doesn't exist");
         }
 
-//        project.setDevelopers(new HashSet<>());
-//        projectService.save(project);
-
-//        if(user.getProjects().isEmpty()){
-//            System.out.println("Here");
-//            user.removeRole(roleService.findByRoleName(RoleName.ROLE_MANAGER));
-//            userService.save(user);
-//        }
+        if(user.getProjects().size() == 1){
+            System.out.println("Here");
+            user.removeRole(roleService.findByRoleName(RoleName.ROLE_MANAGER));
+            userService.save(user);
+        }
 
         projectService.delete(project);
         return ResponseEntity.ok(new ApiResponse("Project " + project.getName() + " successfully deleted!"));
@@ -116,9 +114,32 @@ public class ProjectController {
         User developer = userService.findById(developerId);
         developer.addProjectsWorkingOn(project);
         developer.addRole(roleService.findByRoleName(RoleName.ROLE_DEVELOPER));
-        //project.addDeveloper(developer);
         projectService.save(project);
         userService.save(developer);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{projectId}/developer")
+    @Secured("ROLE_MANAGER")
+    public ResponseEntity<?> removeDeveloperFromProject(@PathVariable Long projectId,
+                                                        @RequestParam(name = "id") Long developerId,
+                                                        Principal principal){
+        User user = userService.findByUsername(principal.getName());
+        Project project = projectService.findById(projectId);
+
+        if(!project.getProjectManager().equals(user)){
+            throw new EntityNotFoundException("Project with id " + projectId + " doesn't exist");
+        }
+
+        User developer = userService.findById(developerId);
+
+        if(developer.getId().equals(user.getId())){
+            throw new IllegalActionException("You can't remove yourself from your project!");
+        }
+
+        developer.removeProjectWorkingOn(project);
+        projectService.save(project);
 
         return ResponseEntity.ok().build();
     }

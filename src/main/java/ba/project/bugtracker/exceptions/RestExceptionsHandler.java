@@ -50,8 +50,15 @@ public class RestExceptionsHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<Object> handleInvalidCredentials(
             InvalidCredentialsException ex) {
-        System.out.println("Here");
         ApiException apiException = new ApiException(HttpStatus.UNAUTHORIZED);
+        apiException.setMessage(ex.getMessage());
+        return buildResponseEntity(apiException);
+    }
+
+    @ExceptionHandler(IllegalActionException.class)
+    public ResponseEntity<Object> handleIllegalAction(
+            IllegalActionException ex) {
+        ApiException apiException = new ApiException(HttpStatus.FORBIDDEN);
         apiException.setMessage(ex.getMessage());
         return buildResponseEntity(apiException);
     }

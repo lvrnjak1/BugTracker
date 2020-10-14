@@ -24,10 +24,6 @@ public class Project extends Entity{
     @ManyToOne(cascade = CascadeType.PERSIST)
     private User projectManager;
 
-//    @JsonIgnore
-//    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "projectsWorkingOn")
-//    private Set<User> developers = new HashSet<>();
-//    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(name = "project_developer",
             joinColumns = @JoinColumn(name = "project_id"),
@@ -41,5 +37,9 @@ public class Project extends Entity{
 
     public void addDeveloper(User developer) {
         developers.add(developer);
+    }
+
+    public void removeDeveloper(User developer) {
+        developers.remove(developer);
     }
 }
