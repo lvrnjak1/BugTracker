@@ -2,18 +2,18 @@ package ba.project.bugtracker.controllers;
 
 import ba.project.bugtracker.exceptions.custom.EntityNotFoundException;
 import ba.project.bugtracker.exceptions.custom.IllegalActionException;
-import ba.project.bugtracker.model.Project;
 import ba.project.bugtracker.model.User;
+import ba.project.bugtracker.model.enums.RoleName;
 import ba.project.bugtracker.requests.ProjectRequest;
 import ba.project.bugtracker.responses.ApiResponse;
 import ba.project.bugtracker.services.ProjectService;
 import ba.project.bugtracker.services.RoleService;
 import ba.project.bugtracker.services.UserService;
-import ba.project.bugtracker.utility.RoleName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import ba.project.bugtracker.model.Project;
 
 import javax.validation.Valid;
 import java.security.Principal;

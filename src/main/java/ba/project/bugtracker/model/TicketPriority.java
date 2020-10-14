@@ -1,6 +1,6 @@
 package ba.project.bugtracker.model;
 
-import ba.project.bugtracker.model.enums.RoleName;
+import ba.project.bugtracker.model.enums.TicketPriorityName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,12 +11,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "roles")
+@Table(name = "ticket_priorities")
 @javax.persistence.Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Role extends Entity{
+public class TicketPriority extends Entity{
     @Enumerated(value = EnumType.STRING)
-    private RoleName role;
+    private TicketPriorityName priority;
 }

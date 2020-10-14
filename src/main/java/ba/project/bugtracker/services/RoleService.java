@@ -2,8 +2,8 @@ package ba.project.bugtracker.services;
 
 import ba.project.bugtracker.exceptions.custom.EntityNotFoundException;
 import ba.project.bugtracker.model.Role;
+import ba.project.bugtracker.model.enums.RoleName;
 import ba.project.bugtracker.repositories.RoleRepository;
-import ba.project.bugtracker.utility.RoleName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

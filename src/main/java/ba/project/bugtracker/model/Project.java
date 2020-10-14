@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -16,9 +17,11 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Project extends Entity{
+public class Project extends ba.project.bugtracker.model.Entity {
     @Column(nullable = false)
     private String name;
+    @Column(unique = true)
+    private String code;
 
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.PERSIST)
@@ -33,6 +36,12 @@ public class Project extends Entity{
     public Project(String name, User projectManager) {
         this.name = name;
         this.projectManager = projectManager;
+        this.code = generateCode();
+    }
+
+    private String generateCode() {
+        int length = 6;
+        return RandomStringUtils.random(length, true, true);
     }
 
     public void addDeveloper(User developer) {
