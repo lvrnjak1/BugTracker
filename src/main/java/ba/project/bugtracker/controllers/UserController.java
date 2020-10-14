@@ -23,9 +23,9 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping("/user/projects")
+    @GetMapping("/user/managed-projects")
     @Secured("ROLE_MANAGER")
-    public ResponseEntity<?> getProjects(Principal principal){
+    public ResponseEntity<?> getProjectsManagedMy(Principal principal){
         User user = userService.findByUsername(principal.getName());
         return ResponseEntity.ok(user.getProjects());
     }
@@ -34,12 +34,24 @@ public class UserController {
     @Secured("ROLE_USER")
     public ResponseEntity<?> deleteAccount(Principal principal){
         User user = userService.findByUsername(principal.getName());
-//        user.setProjectsWorkingOn(new HashSet<>());
-//        User saved = userService.save(user);
         for (Project p : user.getProjectsWorkingOn()){
             p.getDevelopers().remove(user);
         }
         userService.delete(user);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/user/projects")
+    @Secured("ROLE_DEVELOPER")
+    public ResponseEntity<?> getAllProjectsForDeveloper(Principal principal){
+        User developer = userService.findByUsername(principal.getName());
+        return ResponseEntity.ok(developer.getProjectsWorkingOn());
+    }
+
+    @GetMapping("/user/{developerId}/projects")
+    @Secured("ROLE_MANAGER")
+    public ResponseEntity<?> getAllProjectsForDeveloper(@PathVariable Long developerId){
+        User developer = userService.findById(developerId);
+        return ResponseEntity.ok(developer.getProjectsWorkingOn());
     }
 }
