@@ -1,7 +1,9 @@
 package ba.project.bugtracker.controllers;
 
 import ba.project.bugtracker.model.Project;
+import ba.project.bugtracker.model.Ticket;
 import ba.project.bugtracker.model.User;
+import ba.project.bugtracker.services.TicketService;
 import ba.project.bugtracker.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final TicketService ticketService;
 
     @GetMapping("/user/{userId}")
     @Secured("ROLE_USER")
@@ -37,6 +40,10 @@ public class UserController {
         for (Project p : user.getProjectsWorkingOn()){
             p.getDevelopers().remove(user);
         }
+        for(Ticket t : user.getTicketsWorkingOn()){
+            t.setDeveloper(null);
+            ticketService.save(t);
+        }
         userService.delete(user);
         return ResponseEntity.ok().build();
     }
@@ -53,5 +60,12 @@ public class UserController {
     public ResponseEntity<?> getAllProjectsForDeveloper(@PathVariable Long developerId){
         User developer = userService.findById(developerId);
         return ResponseEntity.ok(developer.getProjectsWorkingOn());
+    }
+
+    @GetMapping("/user/{developerId}/tickets")
+    @Secured("ROLE_MANAGER")
+    public ResponseEntity<?> getAllTicketsForDeveloper(@PathVariable Long developerId){
+        User developer = userService.findById(developerId);
+        return ResponseEntity.ok(developer.getTicketsWorkingOn());
     }
 }

@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Table(name = "tickets")
@@ -33,6 +30,21 @@ public class Ticket extends Entity{
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.PERSIST)
     private Project project;
+
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private User developer;
+
+    public Ticket(String title, String description, Timestamp timestamp, User author, TicketType type,
+                  TicketPriority priority, Project project){
+        this.title = title;
+        this.description = description;
+        this.timestamp = timestamp;
+        this.author = author;
+        this.type = type;
+        this.priority = priority;
+        this.project = project;
+        this.developer = null;
+    }
 
     public String getTitle() {
         return title;
@@ -88,5 +100,13 @@ public class Ticket extends Entity{
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public User getDeveloper() {
+        return developer;
+    }
+
+    public void setDeveloper(User developer) {
+        this.developer = developer;
     }
 }

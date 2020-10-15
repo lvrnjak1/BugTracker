@@ -47,4 +47,10 @@ public class TicketService {
     public void save(Ticket ticket) {
         ticketRepository.save(ticket);
     }
+
+    public Ticket findById(Long ticketId) {
+        return ticketRepository.findById(ticketId).orElseThrow(
+                () -> new EntityNotFoundException("Ticket with id " + ticketId + " doesn't exist!")
+        );
+    }
 }

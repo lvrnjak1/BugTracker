@@ -40,6 +40,10 @@ public class User extends Entity implements UserDetails {
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "developers")
     private Set<Project> projectsWorkingOn = new HashSet<>();
 
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "developer")
+    private Set<Ticket> ticketsWorkingOn = new HashSet<>();
+
     public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
@@ -138,6 +142,14 @@ public class User extends Entity implements UserDetails {
         this.projectsWorkingOn = projectsWorkingOn;
     }
 
+    public Set<Ticket> getTicketsWorkingOn() {
+        return ticketsWorkingOn;
+    }
+
+    public void setTicketsWorkingOn(Set<Ticket> ticketsWorkingOn) {
+        this.ticketsWorkingOn = ticketsWorkingOn;
+    }
+
     public void addProjectsWorkingOn(Project project){
         this.projectsWorkingOn.add(project);
         project.addDeveloper(this);
@@ -146,5 +158,13 @@ public class User extends Entity implements UserDetails {
     public void removeProjectWorkingOn(Project project) {
         this.projectsWorkingOn.remove(project);
         project.removeDeveloper(this);
+    }
+
+    public void addTicketsWorkingOn(Ticket ticket) {
+        this.ticketsWorkingOn.add(ticket);
+    }
+
+    public void removeTicketsWorkingOn(Ticket ticket) {
+        this.ticketsWorkingOn.remove(ticket);
     }
 }
