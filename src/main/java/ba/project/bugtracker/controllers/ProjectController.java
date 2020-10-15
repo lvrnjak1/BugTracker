@@ -139,6 +139,11 @@ public class ProjectController {
         }
 
         developer.removeProjectWorkingOn(project);
+
+        if(developer.getProjectsWorkingOn().isEmpty()){
+            developer.removeRole(roleService.findByRoleName(RoleName.ROLE_DEVELOPER));
+        }
+
         projectService.save(project);
 
         return ResponseEntity.ok().build();
