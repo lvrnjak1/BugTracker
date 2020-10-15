@@ -158,4 +158,17 @@ public class ProjectController {
 
         return ResponseEntity.ok(project.getDevelopers());
     }
+
+    @GetMapping("/{projectId}/tickets")
+    @Secured("ROLE_MANAGER")
+    public ResponseEntity<?> getAllTickets(@PathVariable Long projectId, Principal principal){
+        User user = userService.findByUsername(principal.getName());
+        Project project = projectService.findById(projectId);
+
+        if(!project.getProjectManager().equals(user)){
+            throw new EntityNotFoundException("Project with id " + projectId + " doesn't exist");
+        }
+
+        return ResponseEntity.ok(project.getTickets());
+    }
 }

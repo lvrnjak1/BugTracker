@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
 
 @RestController
@@ -26,7 +27,7 @@ public class TicketController {
     @PostMapping
     @Secured("ROLE_USER")
     public ResponseEntity<?> addTicket(@RequestParam(name = "code") String projectCode,
-                                       @RequestBody TicketRequest ticketRequest,
+                                       @RequestBody @Valid TicketRequest ticketRequest,
                                        Principal principal){
         User user = userService.findByUsername(principal.getName());
         Project project = projectService.findByCode(projectCode);
@@ -38,8 +39,25 @@ public class TicketController {
     }
 
     //add ticket (developer, manager)
+    @PostMapping("/{projectId}")
+    @Secured("ROLE_DEVELOPER")
+    public ResponseEntity<?> addTicketAsDeveloper(@PathVariable Long projectId,
+                                                  @RequestBody @Valid TicketRequest ticketRequest,
+                                       Principal principal){
+        User user = userService.findByUsername(principal.getName());
+        Project project = projectService.findById(projectId);
+        Ticket ticket = ticketService.getTicketFromRequest(ticketRequest, user, project);
+        project.addTicket(ticket);
+        ticketService.save(ticket);
+        projectService.save(project);
+        return ResponseEntity.ok(ticket);
+    }
+
     //edit ticket
+
     //delete ticket
+
+
     //assign ticket to developer
     //remove developer from ticket
 }
