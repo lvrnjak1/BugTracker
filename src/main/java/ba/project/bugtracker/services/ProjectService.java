@@ -30,4 +30,10 @@ public class ProjectService {
     public void delete(Project project) {
         projectRepository.delete(project);
     }
+
+    public Project findByCode(String code) {
+        return projectRepository.findByCode(code).orElseThrow(
+                () -> new EntityNotFoundException("Project with code " + code + " doesn't exist!")
+        );
+    }
 }

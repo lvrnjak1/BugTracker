@@ -33,6 +33,10 @@ public class Project extends ba.project.bugtracker.model.Entity {
             inverseJoinColumns = @JoinColumn(name = "developer_id"))
     private Set<User> developers = new HashSet<>();
 
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
+    private Set<Ticket> tickets = new HashSet<>();
+
     public Project(String name, User projectManager) {
         this.name = name;
         this.projectManager = projectManager;
@@ -50,5 +54,13 @@ public class Project extends ba.project.bugtracker.model.Entity {
 
     public void removeDeveloper(User developer) {
         developers.remove(developer);
+    }
+
+    public void addTicket(Ticket ticket){
+        tickets.add(ticket);
+    }
+
+    public void removeTicket(Ticket ticket){
+        tickets.remove(ticket);
     }
 }
